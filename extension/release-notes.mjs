@@ -7,7 +7,7 @@ import {fileURLToPath} from "node:url";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
-const {areas, releases} = read("extension/changelog.json");
+const {areas, credits, releases} = read("extension/changelog.json");
 const version = process.argv[2] || read("package.json").version;
 const release = releases.find((r) => r.version === version);
 if (!release) {
@@ -17,10 +17,17 @@ if (!release) {
 
 const TITLE = {en: `What's new in ${version}`, fr: `Nouveautés de la ${version}`};
 
+// Crédits d'une nouveauté : « (Idée de mkl-rgb) », un groupe par rôle
+function creditText(item, lang) {
+  const list = item.credits || [];
+  const groups = [...new Set(list.map((c) => c.for))].map((role) => `${credits[role][lang]} ${list.filter((c) => c.for === role).map((c) => c.name).join(", ")}`);
+  return groups.length ? ` (${groups.join(" ; ")})` : "";
+}
+
 function notes(lang) {
   // Rubriques dans l'ordre de leur première nouveauté
   const blocks = [...new Set(release.items.map((i) => i.area))]
-    .map((a) => [areas[a][lang], ...release.items.filter((i) => i.area === a).map((i) => `- ${i[lang]}`)].join("\n"));
+    .map((a) => [areas[a][lang], ...release.items.filter((i) => i.area === a).map((i) => `- ${i[lang]}${creditText(i, lang)}`)].join("\n"));
   return [TITLE[lang], ...blocks].join("\n\n");
 }
 

@@ -50,11 +50,16 @@ test("journal : chaque nouveauté a ses deux langues, une rubrique, un réglage 
     assert.ok(r.items.length, `${r.version} : aucune nouveauté`);
     for (const item of r.items) {
       const where = `${r.version} : ${item.fr}`;
-      assert.deepEqual(Object.keys(item).filter((k) => !["area", "fr", "en", "feature", "tab"].includes(k)), [], where);
+      assert.deepEqual(Object.keys(item).filter((k) => !["area", "fr", "en", "feature", "tab", "credits"].includes(k)), [], where);
       assert.ok(item.fr?.trim() && item.en?.trim(), where);
       assert.ok(item.area in changelog.areas, `${where} : rubrique inconnue ${item.area}`);
       if (item.feature) assert.ok(features.has(item.feature), `${where} : réglage inconnu ${item.feature}`);
       if (item.tab) assert.ok(tabs.has(item.tab), `${where} : onglet inconnu ${item.tab}`);
+      for (const c of item.credits || []) {
+        assert.match(c.name, /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/, `${where} : identifiant GitHub invalide ${c.name}`);
+        assert.ok(c.for in changelog.credits, `${where} : rôle inconnu ${c.for}`);
+        assert.deepEqual(Object.keys(c).sort(), ["for", "name"], where);
+      }
     }
   }
 });
@@ -151,4 +156,16 @@ test("guide : chaque onglet du panneau renvoie à une section du guide qui exist
     assert.ok(anchor, `onglet ${tab} sans section du guide`);
     assert.ok(anchors.has(anchor), `onglet ${tab} : ancre #${anchor} absente de docs/guide.md`);
   }
+});
+
+test("crédits : regroupés par rôle, dans l'ordre du journal, avec le lien du profil GitHub", () => {
+  const {news} = load();
+  const item = {credits: [{name: "a-b", for: "idea"}, {name: "c", for: "code"}, {name: "d", for: "idea"}]};
+  assert.deepEqual(news.itemCredits(item), [
+    {label: "Idée de", names: ["a-b", "d"]},
+    {label: "Contribution de", names: ["c"]},
+  ]);
+  assert.deepEqual(news.itemCredits({}), []);
+  assert.equal(news.profileUrl("mkl-rgb"), "https://github.com/mkl-rgb");
+  for (const role of Object.values(changelog.credits)) assert.ok(role.fr && role.en);
 });

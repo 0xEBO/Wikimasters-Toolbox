@@ -324,7 +324,7 @@ Avec l'option **Réclamer les succès automatiquement** (désactivée par défau
 
 ### Nouveautés
 
-Ce qui change à chaque version de la Toolbox, rubrique par rubrique (Paquets, Échanges…). Les versions installées depuis votre dernière visite portent la mention *Nouveau pour vous* ; les plus anciennes sont repliées sous *Versions précédentes*.
+Ce qui change à chaque version de la Toolbox, rubrique par rubrique (Paquets, Échanges…). Les versions installées depuis votre dernière visite portent la mention *Nouveau pour vous* ; les plus anciennes sont repliées sous *Versions précédentes*. Une nouveauté proposée ou écrite par un joueur porte son nom (*Idée de …*, *Contribution de …*), avec un lien vers son profil GitHub.
 
 - **Activer** : allume l'option dont parle la nouveauté, quand elle est désactivée (une nouvelle option l'est souvent au départ) ;
 - **Voir** : ouvre l'onglet concerné, ou les réglages sur l'option, soulignée un instant.
