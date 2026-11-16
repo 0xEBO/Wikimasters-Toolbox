@@ -6,7 +6,7 @@
 // d'une carte ouvre la fenêtre du site : onOpen) et onglet « Prix ».
 import {useState, useEffect, useMemo, useRef} from "preact/hooks";
 import {useStore} from "../lib/store";
-import {KINDS, cardsState, loadCards, viewGroups, filterGroups, matchKeywords, parseKeyword, normText, copiesByCard, keepOnePerCard, discardGroups, sellGroups, copyFor, afterSell, LOCKED, ORDERS, sortGroups} from "../features/collection-view";
+import {KINDS, cardsState, loadCards, viewGroups, filterGroups, matchKeywords, parseKeyword, normText, copiesByCard, keepOnePerCard, discardGroups, sellGroups, copyFor, afterSell, LOCKED, ORDERS, sortGroups, STARRED, byStarred} from "../features/collection-view";
 import {pricing, summaryOf, priceVersion, loadPrices, hasFreshPrice} from "../state/prices";
 import {CardTile, Icon, Notice, Paged, Progress, Rarity, fmt, plural} from "./components";
 import {toast, errorMessage} from "./feedback";
@@ -162,6 +162,7 @@ export function CollectionCards({filter, onOpen, mini = false}) {
   const [running, setRunning] = useState(null); // {label, done, total} : chargement des prix ou défausse
   const [opening, setOpening] = useState(null); // carte en cours d'ouverture dans la fenêtre du site
   const [order, setOrder] = useState("rarity"); // ORDERS (features/collection-view.js)
+  const [starred, setStarred] = useState("all"); // STARRED (features/collection-view.js)
   const abort = useRef(null);
   const {kinds, sale, min, max, anyRarity} = filter;
   const keepOne = kinds.includes("doubles");
@@ -193,7 +194,8 @@ export function CollectionCards({filter, onOpen, mini = false}) {
   };
   const removeWord = (word) => setWords((ws) => ws.filter((w) => w !== word));
   const flipWord = (word) => setWords((ws) => ws.map((w) => (w === word ? {...w, out: !w.out} : w)));
-  const filtered = useMemo(() => (rarities.length ? byQuery.filter((g) => rarities.includes(g.rarity)) : byQuery), [byQuery, rarities]);
+  const byStar = useMemo(() => (starred === "all" ? byQuery : byQuery.filter(byStarred(starred))), [byQuery, starred]);
+  const filtered = useMemo(() => (rarities.length ? byStar.filter((g) => rarities.includes(g.rarity)) : byStar), [byStar, rarities]);
   const themeCounts = useMemo(() => {
     const m = new Map();
     for (const g of filtered) m.set(themeOf(g.card), (m.get(themeOf(g.card)) || 0) + 1);
@@ -201,7 +203,7 @@ export function CollectionCards({filter, onOpen, mini = false}) {
   }, [filtered]);
   // Même tableau tant que rien ne change : cocher une carte ne ramène pas la liste à sa première page
   const shown = useMemo(() => (theme && themeCounts.some(([t]) => t === theme) ? filtered.filter((g) => themeOf(g.card) === theme) : filtered), [filtered, theme, themeCounts]);
-  const rarityCount = (r) => byQuery.filter((g) => g.rarity === r).length;
+  const rarityCount = (r) => byStar.filter((g) => g.rarity === r).length;
   // Tri par valeur : le prix affiché sur la carte (celui de l'exemplaire qui serait vendu) ; pas de
   // prix pour le filtre « jamais vendues »
   const byValue = sale !== "never" && order !== "rarity";
@@ -406,6 +408,13 @@ export function CollectionCards({filter, onOpen, mini = false}) {
             ))}
           </select>
         )}
+        <select class={`mini-select${starred !== "all" ? " on" : ""}`} aria-label={L("Favoris", "Favorites")} value={starred} onChange={(e) => setStarred(e.currentTarget.value)}>
+          {STARRED.map((o) => (
+            <option key={o.id} value={o.id}>
+              {o.label}
+            </option>
+          ))}
+        </select>
         <span class="filter-aside small muted">{plural(shown.length, L("carte", "card"))}</span>
       </div>
       {byValue && unpricedCards > 0 && !running && !sale && (

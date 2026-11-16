@@ -60,6 +60,11 @@
           "feature": "collectionOrder",
           "fr": "Choisissez l'ordre de la page Collection dans les réglages (rareté, nom, favoris ou date d'ajout) : il est repris à chaque visite, au lieu de l'ordre par rareté du site.",
           "en": "Choose the order of the Collection page in the settings (rarity, name, favorites or date added): it is applied on every visit, instead of the site's order by rarity."
+        },
+        {
+          "area": "cards",
+          "fr": "Dans la liste de la barre Toolbox de la page Collection, un nouveau filtre garde ou écarte vos favoris : hors favoris (les cartes que vous pouvez vendre ou défausser) ou favoris seulement.",
+          "en": "In the Toolbox bar list of the Collection page, a new filter keeps or leaves out your favorites: not favorites (the cards you can sell or discard) or favorites only."
         }
       ]
     },

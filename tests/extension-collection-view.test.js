@@ -258,3 +258,14 @@ test("collection : tri par valeur, cartes sans prix à la fin, ordre par rareté
   assert.equal(order("rarity"), "abcde");
   assert.deepEqual(view.ORDERS.map((o) => o.id), ["rarity", "value-desc", "value-asc"]);
 });
+
+test("collection : filtre des favoris, sur les exemplaires d'une carte dans une rareté", () => {
+  const {view} = setup();
+  const group = (id, ...starred) => ({card_id: id, rows: starred.map((s, i) => ({id: `${id}${i}`, rarity: "C", starred: s}))});
+  const groups = [group("a", false), group("b", true), group("c", true, false), group("d", true, true)];
+  const keep = (mode) => groups.filter(view.byStarred(mode)).map((g) => g.card_id).join("");
+  assert.equal(keep("all"), "abcd");
+  assert.equal(keep("free"), "ac", "au moins un exemplaire à vendre ou défausser");
+  assert.equal(keep("starred"), "bcd", "au moins un exemplaire en favori");
+  assert.deepEqual(view.STARRED.map((o) => o.id), ["all", "free", "starred"]);
+});
