@@ -28,10 +28,25 @@ test("déroulé : une Légendaire laisse plus de temps qu'un paquet ordinaire ; 
   assert.equal(packTimeline([card("SR")], 0).total, 0, "moins d'animations : rien n'attend");
 });
 
+test("vitesse du déroulé : sans animation, rien n'attend ; accéléré seulement en cas de retard", () => {
+  const {packSpeed, packTimeline, FAST} = load();
+  assert.equal(packSpeed({animated: false, late: 0}), 0);
+  assert.equal(packSpeed({animated: false, late: 3}), 0, "option désactivée : pas d'animation même en retard");
+  assert.equal(packSpeed({animated: true, late: 0}), 1);
+  assert.equal(packSpeed({animated: true, late: 2}), FAST);
+  assert.equal(packTimeline([card("C"), card("L")], packSpeed({animated: false, late: 0})).total, 0);
+});
+
 test("meilleures cartes : rareté, puis shiny, puis nouvelle, puis ordre d'ouverture", () => {
   const {bestCards} = load();
   const cards = [card("C", {id: "a"}), card("SR", {id: "b"}), card("SR", {id: "c", isNew: true}), card("SR", {id: "d", is_shiny: true}), card("UR", {id: "e"}), card("R", {id: "f"}), card("SR", {id: "g"})];
   assert.deepEqual(bestCards(cards).map((c) => c.id), ["e", "d", "c", "b", "g"]);
   assert.deepEqual(bestCards(cards, 2).map((c) => c.id), ["e", "d"]);
   assert.deepEqual(bestCards([]), []);
+});
+
+test("réglage : animation de « Tout ouvrir » activée par défaut", () => {
+  const {DEFAULT_SETTINGS, FEATURES} = loadExtensionModule("extension/src/content/state/settings.js");
+  assert.equal(DEFAULT_SETTINGS.features.openAllAnimation, true);
+  assert.ok(FEATURES.some((f) => f.key === "openAllAnimation" && !f.choices));
 });

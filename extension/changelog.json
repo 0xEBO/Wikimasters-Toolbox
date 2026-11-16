@@ -65,6 +65,12 @@
           "area": "cards",
           "fr": "Dans la liste de la barre Toolbox de la page Collection, un nouveau filtre garde ou écarte vos favoris : hors favoris (les cartes que vous pouvez vendre ou défausser) ou favoris seulement.",
           "en": "In the Toolbox bar list of the Collection page, a new filter keeps or leaves out your favorites: not favorites (the cards you can sell or discard) or favorites only."
+        },
+        {
+          "area": "packs",
+          "feature": "openAllAnimation",
+          "fr": "L'animation de « Tout ouvrir » peut être désactivée dans les réglages : les cartes de chaque paquet s'affichent alors directement, face visible.",
+          "en": "The \"Open all\" animation can be turned off in the settings: the cards of each pack are then shown straight away, face up."
         }
       ]
     },

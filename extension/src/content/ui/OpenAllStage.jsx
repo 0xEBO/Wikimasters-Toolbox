@@ -6,6 +6,8 @@
 // rejoignent la pile du bas ; les compteurs par rareté ne comptent que les cartes retournées.
 // Les paquets arrivent au rythme imposé par le site (features/packs.js) : la scène les montre l'un
 // après l'autre, plus vite si elle a du retard. Un clic sur la table retourne tout le paquet.
+// Option openAllAnimation désactivée, ou moins d'animations demandées par le système : cartes posées
+// face visible, sans mouvement (.still).
 // Le prix du marché de chaque carte s'affiche une fois retournée, et la valeur des cartes retournées
 // s'ajoute aux compteurs (prix fiables seulement, comme le récapitulatif).
 // À la fin : les meilleures cartes, puis le récapitulatif habituel (page Paquets ou onglet Paquets).
@@ -20,7 +22,7 @@ import {rarityTexture, siteLogo} from "../features/site-assets";
 import {isOn} from "../state/settings";
 import {priceInfo, priceOf, priceStatus, priceVersion} from "../state/prices";
 import {CardArt, Icon, Mark, Money, Notice, Rarity, fmt, plural} from "./components";
-import {packTimeline, bestCards, cardRank as rank, FAST} from "../features/open-all";
+import {packTimeline, packSpeed, bestCards, cardRank as rank} from "../features/open-all";
 import {RARITIES, RARITY_LABEL} from "../../../../core";
 import {L} from "../../shared/i18n";
 
@@ -149,7 +151,7 @@ export function OpenAllStage() {
     if (!view.done || view.shown >= batches.length - 1) return;
     const shown = view.shown + 1;
     const late = batches.length - 1 - shown;
-    const speed = reducedMotion() ? 0 : late > 0 ? FAST : 1;
+    const speed = packSpeed({animated: isOn("openAllAnimation") && !reducedMotion(), late});
     setView({shown, done: false, skip: false, speed});
     timer.current = setTimeout(() => setView((v) => (v.shown === shown ? {...v, done: true} : v)), packTimeline(batches[shown], speed).total);
   }, [view.done, view.shown, batches.length]);
