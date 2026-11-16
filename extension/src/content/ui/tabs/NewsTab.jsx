@@ -1,10 +1,11 @@
 // Onglet « Nouveautés » : ce qui change à chaque version, écrit pour les joueurs (extension/changelog.json),
 // accueil d'une nouvelle installation, et message après une mise à jour.
+import {Fragment} from "preact";
 import {useState, useEffect} from "preact/hooks";
 import {useStore} from "../../lib/store";
 import {emit} from "../../lib/bus";
 import {settings, settingsFocus, FEATURES} from "../../state/settings";
-import {news, releases, unseenReleases, initNews, markSeen, itemText, AREAS, GUIDE_URL} from "../../state/news";
+import {news, releases, unseenReleases, initNews, markSeen, itemText, itemCredits, profileUrl, AREAS, GUIDE_URL} from "../../state/news";
 import {Icon, plural} from "../components";
 import {toast} from "../feedback";
 import {L, LOCALE} from "../../../shared/i18n";
@@ -48,7 +49,22 @@ function NewsItem({item}) {
   };
   return (
     <li class="news-item">
-      <span class="txt">{itemText(item)}</span>
+      <span class="txt">
+        {itemText(item)}
+        {itemCredits(item).map(({label, names}) => (
+          <span key={label} class="news-credit small muted">
+            {label}{" "}
+            {names.map((name, i) => (
+              <Fragment key={name}>
+                {i > 0 && ", "}
+                <a href={profileUrl(name)} target="_blank" rel="noopener noreferrer">
+                  {name}
+                </a>
+              </Fragment>
+            ))}
+          </span>
+        ))}
+      </span>
       {(feature || item.tab) && (
         <span class="acts">
           {off && (

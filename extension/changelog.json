@@ -2,7 +2,7 @@
   "_doc": [
     "Nouveautés de la Toolbox, écrites pour les joueurs : onglet Nouveautés de l'extension et notes de version de Firefox (npm run release-notes).",
     "Une entrée par version, la plus récente en premier. Chaque nouveauté dit ce que le joueur voit ou peut faire, et où, sans aucun terme technique (fichier, fonction, route).",
-    "area : rubrique (clé de areas) ; les rubriques d'une version s'affichent dans l'ordre de leur première nouveauté, la plus importante en tête. feature : réglage concerné (clé de FEATURES), pour les boutons Activer et Voir et la mention Nouveau des réglages. tab : onglet du panneau ouvert par Voir."
+    "area : rubrique (clé de areas) ; les rubriques d'une version s'affichent dans l'ordre de leur première nouveauté, la plus importante en tête. feature : réglage concerné (clé de FEATURES), pour les boutons Activer et Voir et la mention Nouveau des réglages. tab : onglet du panneau ouvert par Voir. credits : [{name, for}], joueurs qui ont proposé (idea) ou écrit (code) la nouveauté ; name est leur identifiant GitHub, for une clé de credits."
   ],
   "areas": {
     "toolbox": {
@@ -50,7 +50,43 @@
       "en": "Profiles"
     }
   },
+  "credits": {
+    "code": {
+      "fr": "Contribution de",
+      "en": "Contributed by"
+    },
+    "idea": {
+      "fr": "Idée de",
+      "en": "Suggested by"
+    }
+  },
   "releases": [
+    {
+      "version": "2.6.0",
+      "date": "2026-11-14",
+      "items": [
+        {
+          "area": "cards",
+          "feature": "collectionOrder",
+          "fr": "Choisissez l'ordre de la page Collection dans les réglages (rareté, nom, favoris ou date d'ajout) : il est repris à chaque visite, au lieu de l'ordre par rareté du site.",
+          "en": "Choose the order of the Collection page in the settings (rarity, name, favorites or date added): it is applied on every visit, instead of the site's order by rarity.",
+          "credits": [{"name": "Tom32i", "for": "code"}]
+        },
+        {
+          "area": "cards",
+          "fr": "Dans la liste de la barre Toolbox de la page Collection, un nouveau filtre garde ou écarte vos favoris : hors favoris (les cartes que vous pouvez vendre ou défausser) ou favoris seulement.",
+          "en": "In the Toolbox bar list of the Collection page, a new filter keeps or leaves out your favorites: not favorites (the cards you can sell or discard) or favorites only.",
+          "credits": [{"name": "mkl-rgb", "for": "idea"}]
+        },
+        {
+          "area": "packs",
+          "feature": "openAllAnimation",
+          "fr": "L'animation de « Tout ouvrir » peut être désactivée dans les réglages : les cartes de chaque paquet s'affichent alors directement, face visible.",
+          "en": "The \"Open all\" animation can be turned off in the settings: the cards of each pack are then shown straight away, face up.",
+          "credits": [{"name": "mkl-rgb", "for": "idea"}]
+        }
+      ]
+    },
     {
       "version": "2.5.0",
       "date": "2026-11-13",

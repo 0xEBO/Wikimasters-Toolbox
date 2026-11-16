@@ -14,6 +14,15 @@ export const AREAS = Object.fromEntries(Object.entries(changelog.areas).map(([k,
 
 export const itemText = tr;
 
+// Crédits d'une nouveauté, par rôle (clés de changelog.credits) : [{label, names}]. Les noms sont des
+// identifiants GitHub (profileUrl).
+const CREDITS = Object.fromEntries(Object.entries(changelog.credits).map(([k, t]) => [k, tr(t)]));
+export function itemCredits(item) {
+  const list = item.credits || [];
+  return [...new Set(list.map((c) => c.for))].map((role) => ({label: CREDITS[role], names: list.filter((c) => c.for === role).map((c) => c.name)}));
+}
+export const profileUrl = (name) => `https://github.com/${encodeURIComponent(name)}`;
+
 // Comparaison de deux versions x.y.z (négatif : a avant b)
 export function compareVersions(a, b) {
   const pa = String(a).split(".").map(Number);

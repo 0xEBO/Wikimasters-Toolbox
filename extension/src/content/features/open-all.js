@@ -17,6 +17,10 @@ export const BEST = 5;
 
 export const cardRank = (c) => RARITY_RANK[c.rarity] ?? 0;
 
+// Vitesse du déroulé d'un paquet : 0 sans animation (option désactivée, ou moins d'animations
+// demandées par le système), accéléré si la scène a du retard (late : paquets reçus après celui-ci)
+export const packSpeed = ({animated, late}) => (!animated ? 0 : late > 0 ? FAST : 1);
+
 // Délais de chaque carte d'un paquet, et durée totale
 export function packTimeline(cards, speed = 1) {
   let t = (cards.length - 1) * DEAL_STAGGER + DEAL_MS;

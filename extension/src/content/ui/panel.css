@@ -1476,6 +1476,8 @@ table.list.ops .num { font-size: 12.5px; }
 .news-item { display: flex; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); }
 .news-item:last-child { border-bottom: 0; }
 .news-item .txt { flex: 1; min-width: 0; }
+.news-credit { display: block; margin-top: 2px; }
+.news-credit a { color: var(--fg); }
 .news-item .acts { display: inline-flex; gap: 4px; flex: none; }
 .news-older > summary { cursor: pointer; color: var(--muted); font-weight: 600; padding: 4px 0 12px; }
 .news-older > summary:hover { color: var(--fg); }

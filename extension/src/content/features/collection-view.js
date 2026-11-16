@@ -114,6 +114,19 @@ export function sortGroups(groups, order, priceOf) {
   return priced.map((x) => x.g);
 }
 
+// Favoris (exemplaires starred, verrouillés par le site) : "all" (tous), "free" (au moins un
+// exemplaire hors favori : ceux qui se vendent ou se défaussent) ou "starred" (au moins un en favori)
+export const STARRED = [
+  {id: "all", label: L("Favoris compris", "Favorites included")},
+  {id: "free", label: L("Hors favoris", "Not favorites")},
+  {id: "starred", label: L("Favoris seulement", "Favorites only")},
+];
+export function byStarred(mode) {
+  if (mode === "free") return (g) => Boolean(freeCopy(g.rows));
+  if (mode === "starred") return (g) => g.rows.some((r) => r.starred);
+  return () => true;
+}
+
 // Mots-clés : [{text, out}]. Une carte est gardée si elle contient au moins un mot inclus (tous avec
 // all) et aucun mot exclu, dans son titre ou sa description, sans tenir compte de la casse ni des
 // accents ; une partie de mot suffit (« foot » trouve « footballeur »).
