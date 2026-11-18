@@ -244,7 +244,7 @@ export function Modal({title, wide, onClose, children}) {
 }
 
 // sortId / dragging : carte d'une liste rangée à la main (ui/sortable.js)
-export function CardRow({card, rarity, theme, price, uncertain, badges = [], selected, onClick, onTitle, action, wiki = true, sortId, dragging = false}) {
+export function CardRow({card, rarity, theme, price, uncertain, badges = [], selected, onClick, onTitle, action, actionBelow, wiki = true, sortId, dragging = false}) {
   const r = rarity || card?.rarity;
   return (
     <div class={`card${selected ? " sel" : ""}${dragging ? " dragging" : ""}`} data-sort-id={sortId} {...cardProps({card, rarity: r, selected, onClick})}>
@@ -254,7 +254,7 @@ export function CardRow({card, rarity, theme, price, uncertain, badges = [], sel
         {/* Le titre s'arrête avant les boutons d'action, en haut à droite */}
         <div class="head">
           <CardTitle card={card} onTitle={onTitle} wiki={wiki} />
-          {action && <div class="act" onClick={(e) => e.stopPropagation()}>{action}</div>}
+          {action && !actionBelow && <div class="act" onClick={(e) => e.stopPropagation()}>{action}</div>}
         </div>
         {card?.category && <div class="d" title={card.category}>{card.category}</div>}
         <div class="meta">
@@ -264,6 +264,10 @@ export function CardRow({card, rarity, theme, price, uncertain, badges = [], sel
           {price != null && <Money v={price} class="price" approx={Boolean(uncertain)} title={uncertain || undefined} />}
         </div>
       </div>
+      {actionBelow && <div class="card-actions-stack">
+        {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
+        <div onClick={(e) => e.stopPropagation()}>{actionBelow}</div>
+      </div>}
     </div>
   );
 }

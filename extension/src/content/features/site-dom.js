@@ -22,16 +22,19 @@ import {resolveCard} from "./card-lookup";
 import {collectionView, setCollectionView} from "./collection-view";
 import {ensureCollectionOrder} from "./collection-order";
 import {stonksPage, isStonksOpen, openStonks, closeStonks} from "./stonks";
+import {sniperPage, isSniperOpen, openSniper, closeSniper} from "./sniper";
 import {mountPackRecap} from "../ui/PackRecap";
 import {mountDropRates} from "../ui/DropRates";
 import {mountIsland} from "../ui/islands/mount";
 import {CollectionBar} from "../ui/islands/CollectionBar";
 import {CardInsight} from "../ui/islands/CardInsight";
 import {AuctionInsight} from "../ui/islands/AuctionInsight";
+import {SalesHistory} from "../ui/islands/SalesHistory";
 import {FriendTrades} from "../ui/islands/FriendTrades";
 import {TradeRecap} from "../ui/islands/TradeRecap";
 import {TradeFilter} from "../ui/islands/TradeFilter";
 import {StonksPage} from "../ui/islands/StonksPage";
+import {SniperPage} from "../ui/islands/SniperPage";
 import {RevealSide} from "../ui/islands/RevealSide";
 import {SuspenseLadder} from "../ui/islands/Suspense";
 import {readSession} from "../lib/session";
@@ -46,6 +49,7 @@ const SEL = {
   // Lien présent seulement dans les menus qui listent toutes les pages (pas dans la barre du bas)
   fullNavLink: 'a[href="/leaderboard"]',
   marketLink: 'a[href="/marketplace"]',
+  marketView: "main button, main a",
   siteLink: 'a[href^="/"]',
   main: "main",
   tile: 'div[class*="glow-"][class*="rounded-2xl"]',
@@ -108,6 +112,11 @@ const isShinyTile = (tile) => tile.classList.contains(SEL.shinyTile);
 const tileRarity = (tile, fallback) => (isShinyTile(tile) ? "L" : (RARITY_CLASS.exec(tile.className)?.[1] || "").toUpperCase()) || fallback || null;
 // Bouton de la page dont le texte passe le test (hors boutons de l'extension)
 const findButton = (test) => [...document.querySelectorAll(SEL.pullsOpenButton)].find((b) => !b.className.includes("wmt-") && test(b.textContent.trim()));
+const findMarketViewButton = () => [...document.querySelectorAll(SEL.marketView)]
+  .filter((el) => !String(el.className || "").includes("wmt-") && el.getClientRects().length > 0)
+  .map((el) => ({el, text: el.textContent.replace(/\s+/g, " ").trim()}))
+  .filter(({text}) => /march[eé]/i.test(text) && /\bpro\b/i.test(text) && text.length < 100)
+  .sort((a, b) => Number(b.el.tagName === "BUTTON") - Number(a.el.tagName === "BUTTON") || a.text.length - b.text.length)[0]?.el || null;
 
 export const currentPath = () => location.pathname;
 
@@ -203,16 +212,26 @@ function addNavEntries(nav, popup) {
     stonks.remove();
     stonks = null;
   }
-  // Le menu « Plus » garde son apparence : l'entrée active est celle de la barre du bas, d'un autre style
-  if (!popup) markStonksNav(nav, stonks);
+  let sniper = nav.querySelector(".wmt-nav-sniper");
+  if (isOn("marketSniper") && !sniper) {
+    const anchor = nav.querySelector(".wmt-nav-stonks") || nav.querySelector(SEL.marketLink) || nav.querySelector(".wmt-nav-toolbox");
+    sniper = navEntry(model, {cls: "wmt-nav-sniper", href: "#sniper", label: "Sniper", icon: iconSvg("market"), onClick: then(openSniper)});
+    anchor?.parentElement.insertBefore(sniper, anchor.nextSibling);
+  } else if (!isOn("marketSniper") && sniper) sniper.remove();
+  // Dans le menu latéral, la page Toolbox active remplace l'état actif du site. Le menu mobile
+  // conserve son style spécifique de barre du bas.
+  if (!popup) {
+    if (isOn("stonks") && isStonksOpen()) markCustomNav(nav, stonks, true, "stonks");
+    else markCustomNav(nav, sniper, isOn("marketSniper") && isSniperOpen(), "sniper");
+  }
 }
 
 // Page Stonks ouverte : son entrée prend l'apparence de l'entrée active du site, et celle-ci
 // l'apparence de notre entrée au repos. À la fermeture sans changer de page, l'entrée du site reprend
 // la sienne ; après un changement de page, le site a déjà remis ses entrées à jour lui-même.
 const swaps = new Map(); // menu → {site, siteClass, siteCurrent, link, linkClass, path}
-function markStonksNav(nav, link) {
-  const open = Boolean(link) && isOn("stonks") && isStonksOpen();
+function markCustomNav(nav, link, open, name) {
+  open = Boolean(link) && open;
   const swapped = swaps.get(nav);
   if (swapped && (!open || swapped.link !== link)) {
     const {site, siteClass, siteCurrent, path} = swapped;
@@ -230,7 +249,7 @@ function markStonksNav(nav, link) {
   swaps.set(nav, {site: active, siteClass: active.className, siteCurrent: active.getAttribute("aria-current"), link, linkClass: link.className, path: location.pathname});
   active.className = link.className.replace(/\s*\bwmt-\S+/g, "").trim();
   active.removeAttribute("aria-current");
-  link.className = `${swaps.get(nav).siteClass} wmt-nav-link wmt-nav-stonks`;
+  link.className = `${swaps.get(nav).siteClass} wmt-nav-link wmt-nav-${name}`;
   link.setAttribute("aria-current", "page");
 }
 
@@ -248,6 +267,18 @@ function ensureStonksPage() {
     }
   } else hideIsland("stonks");
   const host = main && islands.get("stonks").host;
+  for (const el of document.querySelectorAll("[data-wmt-covered]")) if (!main || el.parentElement !== main) delete el.dataset.wmtCovered;
+  if (main) for (const child of main.children) if (child !== host && child.dataset.wmtCovered == null) child.dataset.wmtCovered = "";
+}
+
+function ensureSniperPage() {
+  const main = isOn("marketSniper") && isSniperOpen() ? document.querySelector(SEL.main) : null;
+  if (main) {
+    const opening = !islands.get("sniper")?.host.isConnected;
+    showIsland("sniper", SniperPage, {}, appendTo(main));
+    if (opening) { main.scrollTop = 0; window.scrollTo(0, 0); }
+  } else hideIsland("sniper");
+  const host = main && islands.get("sniper").host;
   for (const el of document.querySelectorAll("[data-wmt-covered]")) if (!main || el.parentElement !== main) delete el.dataset.wmtCovered;
   if (main) for (const child of main.children) if (child !== host && child.dataset.wmtCovered == null) child.dataset.wmtCovered = "";
 }
@@ -905,6 +936,23 @@ function ensureAuctionInsight() {
   showIsland("auction", AuctionInsight, {auctionId: id}, appendTo(column));
 }
 
+// Historique des ventes placé juste à côté du bouton PRO du site, mais alimenté par les ventes
+// conclues lisibles dans Supabase avec la session normale du joueur.
+function ensureAuctionSalesHistory() {
+  const id = AUCTION_PATH.exec(currentPath())?.[1];
+  const anchor = id && findMarketViewButton();
+  const analysis = islands.get("auction")?.host;
+  const existing = islands.get("auction-sales-history")?.host;
+  if (!id) return hideIsland("auction-sales-history");
+  // La page reconstruit parfois le bouton pendant sa mise à jour : garder l'îlot en place pendant
+  // cette courte absence évite de le déplacer en boucle entre le bouton et l'analyse Toolbox.
+  if (!anchor && existing?.isConnected) return;
+  if (!anchor && !analysis?.isConnected) return hideIsland("auction-sales-history");
+  showIsland("auction-sales-history", SalesHistory, {auctionId: id}, after(anchor || analysis));
+  const host = islands.get("auction-sales-history").host;
+  host.classList.add("wmt-auction-sales-history");
+}
+
 // Profil d'un autre joueur : échanges sous l'en-tête du profil
 function ensureFriendTrades() {
   const name = isOn("friendTrades") ? decodeURIComponent(PROFILE_PATH.exec(currentPath())?.[1] || "") : "";
@@ -1080,10 +1128,12 @@ function run() {
   attempt("ordre de la collection", applyCollectionOrder);
   attempt("fiche d'une carte", ensureCardInsight);
   attempt("analyse d'enchère", ensureAuctionInsight);
+  attempt("historique des ventes", ensureAuctionSalesHistory);
   attempt("échanges sur un profil", ensureFriendTrades);
   attempt("bilan d'un échange", ensureTradeRecap);
   attempt("filtre de prix d'un échange", ensureTradeFilter);
   attempt("page Stonks", ensureStonksPage);
+  attempt("page Sniper", ensureSniperPage);
   for (const tile of document.querySelectorAll(SEL.tile)) attempt("badges des cartes", () => decorateTile(tile, version));
   forgetDetached();
 }
@@ -1129,6 +1179,12 @@ export function startSiteDom() {
   tradeFilter.subscribe(schedule);
   tradeSide.subscribe(schedule);
   stonksPage.subscribe(schedule);
+  sniperPage.subscribe(schedule);
+  document.addEventListener("click", (e) => {
+    if (!isSniperOpen() || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const link = e.target.closest?.(SEL.siteLink);
+    if (link && !link.classList.contains("wmt-nav-link")) closeSniper();
+  }, true);
   // Page Stonks ouverte : un lien du site (menu, logo) la ferme, même vers la page en cours
   document.addEventListener(
     "click",

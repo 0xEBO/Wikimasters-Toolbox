@@ -406,6 +406,15 @@ table.list tbody tr:hover td { background: color-mix(in srgb, var(--fg) 3%, tran
 .already-title.soft { color: var(--muted); font-weight: 500; }
 .already-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .already-row .small { flex: 1; min-width: 0; }
+.sales-history { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.sales-history-panel { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.sales-history-summary { margin-bottom: 6px; color: var(--muted); font-size: 11.5px; }
+.sales-history-chart-wrap { width: 100%; }
+.sales-history-chart { display: block; width: 100%; height: auto; overflow: visible; }
+.sales-history-chart text { fill: var(--muted); font: 10px var(--mono); }
+.sales-grid { fill: none; stroke: var(--line); stroke-width: 1; }
+.sales-history-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.sales-history-chart circle { fill: var(--accent); stroke: var(--bg); stroke-width: 1; }
 /* Prochaines enchères d'une carte (ui/CardAuctions.jsx) : l'enchère de la page est signalée */
 .row-inline { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 table.card-auctions td.act { text-align: right; }
@@ -1345,6 +1354,17 @@ button.chip:disabled { opacity: 0.5; cursor: progress; }
 
 /* --- Page « Stonks » (affichée dans la page du site, à la place de son contenu) */
 .eyebrow { color: var(--faint); font: 500 10.5px/1.3 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; }
+.sniper-filters { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin: 16px 0 8px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.sniper-rarities { display: flex; flex-direction: column; gap: 6px; }
+.sniper-order { display: flex; flex-direction: column; gap: 5px; min-width: 170px; }
+.sniper-order select { min-width: 170px; }
+.sniper-discount { display: flex; flex: 1 1 180px; flex-direction: column; gap: 8px; min-width: 180px; }
+.sniper-discount > span { display: flex; justify-content: space-between; gap: 8px; }
+.sniper-discount input[type="range"] { width: 100%; height: 18px; min-height: 0; margin: 0; padding: 0; border: 0; background: transparent; accent-color: var(--accent); cursor: pointer; }
+.sniper-discount input[type="range"]:focus { outline: 2px solid var(--accent); outline-offset: 3px; box-shadow: none; }
+.sniper-count { margin: 0 2px 12px; }
+.card .card-actions-stack { display: flex; flex: none; flex-direction: column; align-items: stretch; gap: 5px; margin: -2px -4px 0 0; }
+.card .card-actions-stack > div { display: flex; }
 .stonks {
   /* Barres du graphique : gain / perte, validées contre la surface (daltonisme, contraste) ; le texte garde --ok / --danger */
   --up: #42a877;

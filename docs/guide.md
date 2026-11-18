@@ -101,6 +101,8 @@ Quand vous ouvrez une carte (dans votre collection, le catalogue ou le profil d'
 
 ### Page d'une enchère
 
+À côté du bouton du site **Vue du marché (PRO)**, la Toolbox ajoute **Historique des prix**, accessible aussi aux comptes non-Pro : il trace les ventes conclues de cette carte dans la rareté et la version shiny de l'enchère.
+
 Sous le formulaire de mise, l'**Analyse Toolbox** commence par vous prévenir si **vous misez déjà sur une autre enchère de la même carte** (pratique avec une longue liste de souhaits, quand les notifications se suivent) : pour chacune, si vous êtes en tête ou surenchéri, votre mise, la mise actuelle et le temps restant, avec un lien *Voir* (les trois premières, puis leur nombre). Elle signale aussi si vous vendez déjà un exemplaire de la carte. Elle indique ensuite le prix du marché de la carte (celui des shiny pour une carte shiny), l'écart entre la mise actuelle et ce prix s'il est fiable (en vert quand elle est au moins 20 % en dessous, en orange au moins 20 % au-dessus), la prochaine mise possible, si vous avez déjà la carte et quels amis elle intéresse. Le bouton **Prochaines enchères de cette carte** (avec leur nombre) ouvre une fenêtre qui liste toutes les enchères en cours de la même carte, de la fin la plus proche à la plus lointaine : rareté (et shiny), mise actuelle ou de départ, prochaine mise possible, prix du marché de la rareté et écart avec la mise, temps restant, votre position (en tête, surenchéri, votre vente) et un lien *Voir* vers chacune ; l'enchère de la page y est signalée. Ce bloc ne fait que lire : la mise se fait toujours avec le formulaire du site.
 
 Le **titre de l'onglet** suit l'enchère, pour la surveiller depuis un autre onglet : temps restant, votre position et la mise actuelle, par exemple `✓ 4:07 · En tête · 1 250 ₩ — Titre de la carte`.
@@ -270,6 +272,10 @@ Un prix n'est **fiable** qu'à partir de 3 ventes, sans compter la toute premiè
 
 Les prix sont gardés 48 heures (réglable) et réutilisés partout : pastilles, récapitulatifs, échanges.
 
+### Page Sniper
+
+L'entrée **Sniper** du menu du site affiche les enchères en cours dont la mise est sous le prix moyen fiable de la carte. Pour accélérer l'affichage, la page charge 50 offres à la fois et présente les résultats dès que leurs prix sont connus ; **Charger les 50 offres suivantes** poursuit la recherche. La page compare la mise actuelle (ou la mise de départ) à la médiane des ventes récentes dans la même rareté, et ignore les cartes sans assez de ventes pour un prix fiable. Chaque carte indique aussi le temps restant, actualisé en direct. Par défaut, les offres sont triées par remise décroissante, de la plus forte à la plus faible. Vous pouvez aussi filtrer par rareté, choisir un autre ordre (récemment listées, mise la plus basse ou haute, fin imminente) et régler la remise minimum avec le curseur de 0 à 100 % par pas de 5 (25 % par défaut). **Actualiser** relit le marché depuis les offres les plus récentes. Chaque résultat propose **Voir l'enchère** et **Enchérir** ; une confirmation est demandée avant la mise, et une mise minimale actualisée par le site nécessite une seconde confirmation. Les enchères que vous vendez, que vous menez déjà ou qui sont terminées ne peuvent pas recevoir de mise depuis cette page.
+
 ### Marché
 
 - **Mes enchères** : votre solde de WikiBidous, chaque enchère avec la mise actuelle, le temps restant et si vous êtes en tête ou dépassé. Quand vous êtes dépassé, un bouton propose la mise suivante : cliquez, vérifiez le montant dans la confirmation, c'est placé. Si la mise est devenue trop basse entre-temps, la Toolbox vous propose le minimum demandé par le site.
@@ -434,6 +440,7 @@ Le champ de recherche en haut de l'onglet retrouve une option par un mot de son 
 | Échanges | Valeur des échanges | activée |
 | Marché | Alerte de fin d'enchère | activée |
 | Marché | Page Stonks | activée |
+| Marché | Page Sniper | activée |
 | Succès | Réclamer les succès automatiquement | désactivée |
 | Confort | Son de notification | désactivée |
 

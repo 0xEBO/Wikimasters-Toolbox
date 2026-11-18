@@ -101,6 +101,8 @@ extension/
         collection-view.js     collection filtrée (critères cumulables, prix de vente, mots-clés) : mise en vente et défausse, une à une ou par lot
         notify.js              sons de notification et d'alerte
         stonks.js              page Stonks : historique de mes enchères conclues, cartes achetées en stock, ouverture par #stonks
+        sniper.js              page Sniper : enchères actives comparées au prix fiable, ouverture par #sniper
+        sales-history.js       historique des ventes conclues d'une carte, pagination stable depuis Supabase
         site-dom.js            intégration aux pages : tous les sélecteurs du site sont ici
         site-assets.js         fichiers du site repris pour la carte sans image : logo, textures de rareté
       ui/                      interface (Preact, dans un Shadow DOM)
@@ -124,7 +126,7 @@ extension/
         ThemeEditor.jsx        éditeur des thèmes de tri (onglet Réglages) : noms, couleurs, mots-clés, essai sur une description, import / export JSON
         CollectionCards.jsx    filtres de la collection et liste des cartes, à cocher, vendre ou défausser (onglet Prix, barre de la collection)
         tabs/                  un fichier par onglet du panneau (NewsTab.jsx : Nouveautés, accueil d'une installation, message après une mise à jour)
-        islands/               blocs intégrés aux pages du site (collection, carte, enchère, profil, bilan et filtre par prix d'une offre d'échange, révélation d'un paquet : RevealSide, Suspense, Roulette) et page Stonks
+        islands/               blocs intégrés aux pages du site (collection, carte, enchère, historique des ventes, profil, bilan et filtre par prix d'une offre d'échange, révélation d'un paquet : RevealSide, Suspense, Roulette) et pages Stonks / Sniper
 
 scripts/
   categorize_cards.js          CLI de tri (token requis)
@@ -187,7 +189,9 @@ joueur ──clic──▶ ui/ ──▶ features/ ──▶ api/ (http.js) ─�
 
 **Nouvel affichage des cartes.** `site-dom.js` reconnaît les parties d'une carte du site (texture de rareté, zone image, zone texte, badge, étiquettes, attaque et défense) et leur pose des repères `data-wmt-*` ; `site.css` ne cible que ces repères. React ne touche pas à ces attributs, et la boucle les repose si le site reconstruit une carte. Si la structure n'est plus reconnue, la carte garde l'affichage du site. Les tailles sont relatives à la carte (unités `cqw`) : le même style sert en grille et dans la fenêtre d'une carte.
 
-**Page Stonks.** Le site n'a pas de route pour elle : l'entrée du menu ajoute `#stonks` à l'adresse de la page en cours (`history.pushState`, sans navigation de Next.js), et `site-dom.js` masque les blocs de `<main>` (repère `data-wmt-covered`) pour y monter `ui/islands/StonksPage.jsx`. L'entrée prend l'apparence de l'entrée active du site, qui reprend la sienne à la fermeture (*Retour*, lien du site, ou changement de page : le site remet alors ses entrées à jour lui-même). Les entrées « Toolbox » et « Stonks » sont ajoutées à tout menu qui liste toutes les pages (lien vers le classement) : le menu latéral et, sur mobile, le menu *Plus* de la barre du bas, refermé après un clic sur l'une d'elles.
+**Historique des ventes.** Sur une enchère, `site-dom.js` place `ui/islands/SalesHistory.jsx` à côté du bouton « Vue du marché (PRO) ». Au clic, `features/sales-history.js` lit les ventes conclues de la carte dans Supabase avec pagination stable et le filtre ensuite à la rareté et à la version shiny de l'enchère. L'historique complet est fourni par la table de ventes déjà lisible par les joueurs ; la route d'historique du site reste réservée aux comptes Pro.
+
+**Page Stonks et page Sniper.** Le site n'a pas de route pour ces pages : leurs entrées de menu ajoutent respectivement `#stonks` ou `#sniper` à l'adresse de la page en cours (`history.pushState`, sans navigation de Next.js), et `site-dom.js` masque les blocs de `<main>` (repère `data-wmt-covered`) pour y monter `ui/islands/StonksPage.jsx` ou `ui/islands/SniperPage.jsx`. La page Sniper lit les enchères actives par lots de 50, affiche chaque lot dès que ses cartes et prix sont chargés, puis attend une demande explicite avant de lire le suivant. Elle réutilise le cache de prix partagé ; une mise nécessite un clic sur « Miser » puis une confirmation explicite, et les enchères du joueur ou déjà menées sont bloquées. Ces entrées sont ajoutées aux menus qui listent toutes les pages (menu latéral et menu *Plus* mobile).
 
 ### Stockage
 

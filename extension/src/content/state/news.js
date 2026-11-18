@@ -73,6 +73,7 @@ export const GUIDE_ANCHORS = {
   trades: "échanges",
   prices: "prix",
   market: "marché",
+  sniper: "page-sniper",
   packs: "paquets",
   families: "familles",
   images: "images",

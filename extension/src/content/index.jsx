@@ -13,6 +13,7 @@ import {startAchievements} from "./features/achievements";
 import {startSiteDom, watchRoute} from "./features/site-dom";
 import {startNotificationSound} from "./features/notify";
 import {startStonksRoute} from "./features/stonks";
+import {startSniperRoute} from "./features/sniper";
 import {planSort} from "./features/sorter";
 import {App, openPanel} from "./ui/App";
 import {announceNews} from "./ui/tabs/NewsTab";
@@ -47,6 +48,7 @@ if (!window.__wmtContent) {
     startSiteDom();
     watchRoute();
     startStonksRoute();
+    startSniperRoute();
     startBidAlerts();
     startAuctionTab();
     startAchievements();

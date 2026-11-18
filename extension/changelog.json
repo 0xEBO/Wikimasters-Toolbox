@@ -62,6 +62,24 @@
   },
   "releases": [
     {
+      "version": "2.7.0",
+      "date": "2026-11-18",
+      "items": [
+        {
+          "area": "market",
+          "feature": "marketSniper",
+          "fr": "La page Sniper du menu du site repère les enchères sous le prix moyen fiable de la carte et affiche le temps restant. Filtrez, triez, réglez la remise et enchérissez après confirmation.",
+          "en": "The Sniper page in the site menu finds auctions below a card's reliable market price and shows the time remaining. Filter and sort listings, set a minimum discount, and bid after confirmation."
+        },
+        {
+          "area": "market",
+          "feature": "auctionInsight",
+          "fr": "À côté de « Vue du marché (PRO) », un bouton affiche le graphique des ventes conclues de la carte dans la rareté de l'enchère, accessible à tous les joueurs.",
+          "en": "A button beside “Market view (PRO)” shows the card's completed sales chart for the auction's rarity, available to all players."
+        }
+      ]
+    },
+    {
       "version": "2.6.0",
       "date": "2026-11-14",
       "items": [
