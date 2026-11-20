@@ -62,6 +62,54 @@
   },
   "releases": [
     {
+      "version": "2.11.0",
+      "date": "2026-11-20",
+      "items": [
+        {
+          "area": "achievements",
+          "tab": "achievements",
+          "fr": "Dans l’onglet Succès, un plan met en avant les objectifs les plus avancés et indique la progression et la récompense attendue.",
+          "en": "In the Achievements tab, a plan highlights the most advanced goals and shows their progress and reward."
+        }
+      ]
+    },
+    {
+      "version": "2.10.0",
+      "date": "2026-11-20",
+      "items": [
+        {
+          "area": "toolbox",
+          "tab": "settings",
+          "fr": "Dans le volet gauche, les entrées Stonks, Sniper et Réglages sont désormais regroupées dans le sous-menu Toolbox.",
+          "en": "In the left sidebar, Stonks, Sniper and Settings are now grouped in the Toolbox submenu."
+        }
+      ]
+    },
+    {
+      "version": "2.9.0",
+      "date": "2026-11-20",
+      "items": [
+        {
+          "area": "packs",
+          "feature": "openAll",
+          "fr": "Sur la page Paquets, « Tout ouvrir » lance directement l’ouverture de tous les paquets disponibles et révèle leurs cartes au fur et à mesure.",
+          "en": "On the Packs page, “Open all” immediately starts opening every available pack and reveals their cards as they come."
+        }
+      ]
+    },
+    {
+      "version": "2.8.0",
+      "date": "2026-11-18",
+      "items": [
+        {
+          "area": "packs",
+          "feature": "autoOpenPacks",
+          "fr": "Dans les réglages, activez l'ouverture automatique des paquets : sur la page Paquets visible, la Toolbox lance « Tout ouvrir » dès que le bouton du site est disponible et montre les cartes dans sa scène. L'option s'arrête si le site demande une vérification.",
+          "en": "In Settings, turn on automatic pack opening: on the visible Packs page, the Toolbox starts “Open all” as soon as the site's button is available and shows the cards in its stage. It stops if the site asks for verification."
+        }
+      ]
+    },
+    {
       "version": "2.7.0",
       "date": "2026-11-18",
       "items": [
@@ -88,20 +136,35 @@
           "feature": "collectionOrder",
           "fr": "Choisissez l'ordre de la page Collection dans les réglages (rareté, nom, favoris ou date d'ajout) : il est repris à chaque visite, au lieu de l'ordre par rareté du site.",
           "en": "Choose the order of the Collection page in the settings (rarity, name, favorites or date added): it is applied on every visit, instead of the site's order by rarity.",
-          "credits": [{"name": "Tom32i", "for": "code"}]
+          "credits": [
+            {
+              "name": "Tom32i",
+              "for": "code"
+            }
+          ]
         },
         {
           "area": "cards",
           "fr": "Dans la liste de la barre Toolbox de la page Collection, un nouveau filtre garde ou écarte vos favoris : hors favoris (les cartes que vous pouvez vendre ou défausser) ou favoris seulement.",
           "en": "In the Toolbox bar list of the Collection page, a new filter keeps or leaves out your favorites: not favorites (the cards you can sell or discard) or favorites only.",
-          "credits": [{"name": "mkl-rgb", "for": "idea"}]
+          "credits": [
+            {
+              "name": "mkl-rgb",
+              "for": "idea"
+            }
+          ]
         },
         {
           "area": "packs",
           "feature": "openAllAnimation",
           "fr": "L'animation de « Tout ouvrir » peut être désactivée dans les réglages : les cartes de chaque paquet s'affichent alors directement, face visible.",
           "en": "The \"Open all\" animation can be turned off in the settings: the cards of each pack are then shown straight away, face up.",
-          "credits": [{"name": "mkl-rgb", "for": "idea"}]
+          "credits": [
+            {
+              "name": "mkl-rgb",
+              "for": "idea"
+            }
+          ]
         }
       ]
     },

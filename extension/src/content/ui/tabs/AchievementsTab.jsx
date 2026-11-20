@@ -2,7 +2,7 @@
 // en un clic ou d'elle-même (option autoClaimAchievements).
 import {useState, useEffect} from "preact/hooks";
 import {useStore} from "../../lib/store";
-import {achievementsState, loadAchievements, claimAll, claimable} from "../../features/achievements";
+import {achievementsState, loadAchievements, claimAll, claimable, planAchievements} from "../../features/achievements";
 import {settings, isOn} from "../../state/settings";
 import {Icon, Money, Notice, Progress, fmt, plural, timeAgo} from "../components";
 import {toast, errorMessage} from "../feedback";
@@ -46,6 +46,7 @@ export function AchievementsTab() {
 
   const list = s.list || [];
   const ready = claimable(list);
+  const plan = planAchievements(list);
   const count = (status) => list.filter((a) => a.status === status).length;
   const shown = filter === "all" ? list : list.filter((a) => a.status === filter);
   const earned = list.filter((a) => a.status === "claimed").reduce((n, a) => n + a.reward, 0);
@@ -80,6 +81,30 @@ export function AchievementsTab() {
             <div class="stat"><div class="k">{L("À réclamer", "To claim")}</div><div class="v">{fmt(ready.length)}</div></div>
             <div class="stat"><div class="k">{L("Récompenses à réclamer", "Rewards to claim")}</div><div class="v"><Money v={ready.reduce((n, a) => n + a.reward, 0)} /></div></div>
             <div class="stat"><div class="k">{L("Récompenses reçues", "Rewards received")}</div><div class="v"><Money v={earned} /></div></div>
+          </div>
+
+          <div class="box stack">
+            <div>
+              <h3>{L("Plan pour les prochaines récompenses", "Plan for your next rewards")}</h3>
+              <p class="help">{L("Les objectifs sont classés par progression la plus avancée, puis par récompense. Le jeu ne fournit pas la durée estimée : le nombre restant est affiché pour vous aider à choisir.", "Objectives are ranked by progress, then reward. The game does not provide an estimated time, so the remaining count is shown to help you choose.")}</p>
+            </div>
+            {plan.length ? (
+              <div class="stack">
+                {plan.map((a) => (
+                  <div class="row" key={a.id} style={{alignItems: "flex-start"}}>
+                    <div style={{flex: 1, minWidth: 0}}>
+                      <strong>{a.title}</strong>
+                      <div class="small muted">{a.description}</div>
+                      <Progress done={a.current} total={a.target} label={L(`${Math.floor(a.completion * 100)} %`, `${Math.floor(a.completion * 100)}%`)} />
+                      <div class="small muted">{L(`${fmt(a.current)} / ${fmt(a.target)} · encore ${fmt(a.remaining)}`, `${fmt(a.current)} / ${fmt(a.target)} · ${fmt(a.remaining)} to go`)}</div>
+                    </div>
+                    <div class="num"><Money v={a.reward} /></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div class="empty">{L("Aucun objectif en cours avec une progression disponible.", "No in-progress achievement has available progress data.")}</div>
+            )}
           </div>
 
           <div class="box stack">

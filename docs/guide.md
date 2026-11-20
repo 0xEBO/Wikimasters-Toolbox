@@ -18,7 +18,7 @@ Ce guide décrit tout ce que fait l'extension, page par page puis onglet par ong
 ## En deux minutes
 
 1. **Installez l'extension** (voir le [README](../README.md#installation)) puis rechargez wiki-masters.com. Vous devez être connecté au site : l'extension utilise votre session, vous n'avez rien à saisir.
-2. **Ouvrez la Toolbox** par l'entrée **Toolbox** du menu du site (sur mobile, dans le menu *Plus*), ou par l'icône de l'extension dans la barre du navigateur. Sur un téléphone, elle occupe tout l'écran (onglets en icônes sous l'en-tête), ses fenêtres s'ouvrent depuis le bas avec leurs boutons toujours visibles, et ses notifications s'affichent au-dessus de la barre de navigation du site.
+2. **Ouvrez la Toolbox** par l'entrée **Toolbox** du volet gauche : elle déroule **Stonks**, **Sniper** et **Réglages**. Sur mobile, utilisez le menu *Plus* ou l'icône de l'extension dans la barre du navigateur. Sur un téléphone, le panneau occupe tout l'écran (onglets en icônes sous l'en-tête), ses fenêtres s'ouvrent depuis le bas avec leurs boutons toujours visibles, et ses notifications s'affichent au-dessus de la barre de navigation du site.
 3. **Triez votre collection** : onglet *Tri* → *Aperçu du tri* → *Appliquer*. Chaque carte reçoit une étiquette de thème (Sports, Histoire, Sciences…), et les cartes en plusieurs exemplaires l'étiquette `Doublon`. Vos étiquettes personnelles ne sont jamais touchées.
 4. **Décrivez ce que vous collectionnez** dans l'onglet *Profils*, et importez les profils de vos amis : la Toolbox saura quelles cartes leur proposer, et lesquelles leur demander.
 
@@ -127,7 +127,7 @@ Vous pouvez limiter la lecture à certaines raretés : c'est bien plus rapide, c
 
 ### Page Paquets
 
-- **Tout ouvrir**, à côté du bouton *Ouvrir* du site : ouvre tous vos paquets disponibles, l'un après l'autre, après confirmation. Le site impose environ 2 secondes entre deux paquets : l'ouverture prend donc quelques secondes par paquet. Pendant ce temps, une scène montre l'ouverture :
+- **Tout ouvrir**, à côté du bouton *Ouvrir* du site : ouvre tous vos paquets disponibles, l'un après l'autre, directement. Le site impose environ 2 secondes entre deux paquets : l'ouverture prend donc quelques secondes par paquet. Pendant ce temps, une scène montre l'ouverture :
   - les cartes de chaque paquet sont distribuées face cachée, puis se retournent l'une après l'autre ;
   - à partir de Super Rare, le dos se charge à la couleur de la rareté (aura, tremblement) avant de se retourner ; la carte arrive avec un éclair et des ondes, et une Ultra Rare ou une Légendaire se soulève dans un halo (des rayons pour la Légendaire). Une shiny garde son reflet irisé, une carte jamais possédée porte la mention *Nouvelle* ;
   - les compteurs par rareté et le nombre de nouvelles cartes avancent à chaque carte retournée ; les cartes des paquets précédents s'empilent en bas, la plus récente en premier ;
@@ -150,6 +150,7 @@ Vous pouvez limiter la lecture à certaines raretés : c'est bien plus rapide, c
 
   Après *Continuer*, le récapitulatif reste sur l'écran d'ouverture sous le titre *Paquet précédent*, jusqu'à l'ouverture du paquet suivant ou jusqu'à ce que vous le fermiez (croix). Il est gardé par l'extension : il revient aussi après un rechargement de la page ou un redémarrage du navigateur (avec ce que vous en avez fait : cartes défaussées, mises en vente). Un récapitulatif fermé ne revient pas.
 - **Ouvrir le prochain**, en bas du récapitulatif quand il vous reste des paquets : passe l'écran de fin (*Continuer*) et ouvre le paquet suivant avec le bouton *Ouvrir* du site, animation comprise. Si le site demande une vérification anti-robot, sa fenêtre de vérification s'affiche comme d'habitude.
+- **Ouvrir les paquets automatiquement** (option de l'onglet *Réglages*, désactivée par défaut) : tant que la page Paquets reste ouverte et visible, la Toolbox lance *Tout ouvrir* dès que le bouton *Ouvrir* du site est disponible après le compte à rebours. Les paquets disponibles passent par la scène de la Toolbox, qui montre les cartes au fur et à mesure. L'option s'arrête si le site demande une vérification ; validez-la et ouvrez ensuite un paquet manuellement pour reprendre.
 - **Taux de drop** par rareté sur l'écran d'ouverture : d'après vos tirages comptés par l'extension, ou d'après toute votre collection tant que moins de 50 cartes ont été tirées. L'interrupteur **Aujourd'hui** du bloc montre les taux de drop des seuls paquets ouverts aujourd'hui (jour du navigateur, remis à zéro à minuit) ; il est gardé d'une visite à l'autre et partagé avec l'onglet *Paquets* de la Toolbox. Les paquets ouverts avant cette version ne comptent pas dans le jour.
 - **Emplacement des blocs** : les trois boutons de l'en-tête du récapitulatif et des taux de drop placent chaque bloc à gauche, dessous (par défaut) ou à droite. À gauche ou à droite, le bloc reste fixe dans la marge à côté du contenu de la page : plus besoin de faire défiler après chaque paquet. S'il n'y a pas assez de place à côté du contenu (petit écran, mobile), le bloc revient dessous et le bouton du côté trop étroit est désactivé.
 
@@ -195,7 +196,7 @@ La liste des cartes qui passent les critères remplace alors la grille du site, 
 
 ## Le panneau Toolbox
 
-Le panneau s'ouvre par l'entrée **Toolbox** du menu du site ou depuis la popup. Il se ferme avec la croix, la touche Échap ou un clic à côté. Le bouton **Guide** de son en-tête ouvre la section de ce guide qui décrit l'onglet affiché.
+Le panneau s'ouvre par **Réglages** dans le sous-menu **Toolbox** du volet gauche, ou depuis la popup. Il se ferme avec la croix, la touche Échap ou un clic à côté. Le bouton **Guide** de son en-tête ouvre la section de ce guide qui décrit l'onglet affiché.
 
 ### Tri
 
@@ -321,6 +322,7 @@ Chaque carte apparaît une fois par rareté, avec le nombre d'exemplaires. La li
 Les succès du site (*Posséder 1000 cartes*, *Conclure 5 échanges*…) et leurs récompenses en WikiBidous :
 
 - **Indicateurs** : succès débloqués, nombre et montant des récompenses à réclamer, récompenses déjà reçues.
+- **Planificateur** : objectifs en cours classés par progression, puis par récompense, avec le nombre restant selon le compteur du jeu. Il aide à choisir un objectif proche ; le jeu ne fournit pas d'estimation de durée ni de difficulté.
 - **Tout réclamer** : réclame d'un clic la récompense de chaque succès débloqué qui ne l'a pas encore été, l'un après l'autre. Le solde affiché par le site se met à jour. À la première erreur, la réclamation s'arrête et la liste est relue.
 - **Liste**, filtrable (*Tous*, *À réclamer*, *En cours*, *Réclamés*) : les succès à réclamer d'abord, puis ceux en cours, les plus avancés en premier (avec leur progression, par exemple 10 081 / 30 000), puis ceux déjà réclamés.
 

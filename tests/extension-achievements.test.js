@@ -87,6 +87,16 @@ test("liste : à réclamer, puis en cours (les plus avancés d'abord), puis réc
   assert.deepEqual(m.claimable(list).map((a) => a.id), ["a4", "a5"]);
 });
 
+test("planificateur : objectifs les plus avancés, puis récompense, sans progression invalide", () => {
+  const {m} = setup();
+  const list = m.mergeAchievements(DEFS, MINE, PROGRESS);
+  const plan = m.planAchievements([
+    ...list,
+    {id: "invalid", title: "Sans seuil", status: "locked", reward: 500, progress: {current: 1, target: 0}},
+  ]);
+  assert.deepEqual(plan.map((a) => [a.id, a.remaining]), [["a3", 1], ["a2", 19919]]);
+});
+
 test("lecture : synchronisation du site d'abord, puis définitions et déblocages du joueur", async () => {
   const {m, calls} = setup();
   const list = await m.loadAchievements();

@@ -13,7 +13,7 @@ import {owned} from "../state/collection";
 import {priceOf, priceInfo, uncertainNote, requestPrice, priceVersion} from "../state/prices";
 import {tradeFilter, tradeSide, resetTradeFilter, isActive} from "./trade-filter";
 import {wikiImage} from "./wiki-images";
-import {recapState, openAllState, markRevealed, pullStats, collectionRarity, refreshCollectionRarity} from "./packs";
+import {recapState, openAllState, openAllPacks, packsStatus, markRevealed, pullStats, collectionRarity, refreshCollectionRarity} from "./packs";
 import {placeBlocks, clearBlocks} from "./pack-dock";
 import {pulledTags, noteStarred, setStarProxy} from "./quick-tags";
 import {suspense, startSuspense, releaseSuspense, endSuspense, holdsLegendarySound, reducedMotion, ENTER} from "./suspense";
@@ -163,8 +163,9 @@ function navEntry(model, {cls, href, label, icon, onClick}) {
   link.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation();
     onClick();
-  });
+  }, true);
   return link;
 }
 
@@ -195,29 +196,95 @@ function addNavEntries(nav, popup) {
     action();
     if (popup) closeSiteMenu();
   };
-  if (!nav.querySelector(".wmt-nav-toolbox")) {
-    const link = navEntry(model, {cls: "wmt-nav-toolbox", href: "#toolbox", label: "Toolbox", icon: markOutlineSvg(), onClick: then(() => emit("open-panel", {}))});
-    model.parentElement.insertBefore(link, model.nextSibling);
+  let toolbox = nav.querySelector(".wmt-nav-toolbox");
+  let submenu = null;
+  if (!popup) {
+    let group = nav.querySelector(".wmt-nav-group");
+    if (!group) {
+      group = document.createElement("div");
+      group.className = "wmt-nav-group";
+      const parent = toolbox?.parentElement || model.parentElement;
+      parent.insertBefore(group, toolbox || model.nextSibling);
+      if (toolbox) group.append(toolbox);
+    }
+    submenu = group.querySelector(".wmt-nav-submenu");
+    if (!submenu) {
+      submenu = document.createElement("div");
+      submenu.className = "wmt-nav-submenu";
+      submenu.id = `wmt-nav-submenu-${Math.random().toString(36).slice(2)}`;
+      submenu.setAttribute("role", "group");
+      submenu.setAttribute("aria-label", L("Toolbox", "Toolbox"));
+      group.append(submenu);
+      submenu.hidden = true;
+    }
+    if (!toolbox) {
+      toolbox = navEntry(model, {
+        cls: "wmt-nav-toolbox",
+        href: "#toolbox",
+        label: "Toolbox",
+        icon: markOutlineSvg(),
+        onClick: () => {
+          const opening = submenu.hidden;
+          submenu.hidden = !opening;
+          group.dataset.open = String(opening);
+          toolbox.setAttribute("aria-expanded", String(opening));
+          toolbox.setAttribute("aria-controls", submenu.id);
+        },
+      });
+      group.insertBefore(toolbox, submenu);
+      toolbox.setAttribute("role", "button");
+      toolbox.setAttribute("aria-expanded", "false");
+      toolbox.setAttribute("aria-controls", submenu.id);
+      toolbox.addEventListener("keydown", (e) => {
+        if (e.key === " ") {
+          e.preventDefault();
+          toolbox.click();
+        }
+      });
+      const chevron = document.createElement("span");
+      chevron.className = "wmt-nav-chevron";
+      chevron.setAttribute("aria-hidden", "true");
+      toolbox.append(chevron);
+    }
+  } else if (!toolbox) {
+    toolbox = navEntry(model, {cls: "wmt-nav-toolbox", href: "#toolbox", label: "Toolbox", icon: markOutlineSvg(), onClick: then(() => emit("open-panel", {}))});
+    model.parentElement.insertBefore(toolbox, model.nextSibling);
   }
-  nav.querySelector(".wmt-nav-toolbox")?.toggleAttribute("data-wmt-news", hasNews());
-  // « Stonks » juste après le Marché quand il est dans le même bloc que le modèle (pas dans la barre
-  // du bas, sur mobile), sinon après « Toolbox »
+  toolbox?.toggleAttribute("data-wmt-news", hasNews());
+
   let stonks = nav.querySelector(".wmt-nav-stonks");
   if (isOn("stonks") && !stonks) {
-    const market = nav.querySelector(SEL.marketLink);
-    const anchor = market?.parentElement === model.parentElement ? market : nav.querySelector(".wmt-nav-toolbox");
     stonks = navEntry(model, {cls: "wmt-nav-stonks", href: "#stonks", label: "Stonks", icon: stonksOutlineSvg(), onClick: then(openStonks)});
-    anchor.parentElement.insertBefore(stonks, anchor.nextSibling);
+    if (popup) {
+      const market = nav.querySelector(SEL.marketLink);
+      const anchor = market?.parentElement === model.parentElement ? market : toolbox;
+      anchor?.parentElement.insertBefore(stonks, anchor.nextSibling);
+    } else submenu.append(stonks);
   } else if (!isOn("stonks") && stonks) {
     stonks.remove();
     stonks = null;
   }
   let sniper = nav.querySelector(".wmt-nav-sniper");
   if (isOn("marketSniper") && !sniper) {
-    const anchor = nav.querySelector(".wmt-nav-stonks") || nav.querySelector(SEL.marketLink) || nav.querySelector(".wmt-nav-toolbox");
     sniper = navEntry(model, {cls: "wmt-nav-sniper", href: "#sniper", label: "Sniper", icon: iconSvg("market"), onClick: then(openSniper)});
-    anchor?.parentElement.insertBefore(sniper, anchor.nextSibling);
+    if (popup) {
+      const anchor = nav.querySelector(".wmt-nav-stonks") || nav.querySelector(SEL.marketLink) || toolbox;
+      anchor?.parentElement.insertBefore(sniper, anchor.nextSibling);
+    } else submenu.append(sniper);
   } else if (!isOn("marketSniper") && sniper) sniper.remove();
+  if (!popup && submenu && !submenu.querySelector(".wmt-nav-settings")) {
+    const settings = navEntry(model, {cls: "wmt-nav-settings", href: "#toolbox-settings", label: L("Réglages", "Settings"), icon: iconSvg("settings"), onClick: then(() => emit("open-panel", {tab: "settings"}))});
+    submenu.append(settings);
+  }
+  if (!popup && submenu) {
+    const group = nav.querySelector(".wmt-nav-group");
+    const active = (isOn("stonks") && isStonksOpen()) || (isOn("marketSniper") && isSniperOpen());
+    if (group.dataset.open == null) {
+      group.dataset.open = String(active);
+      submenu.hidden = !active;
+      toolbox.setAttribute("aria-expanded", String(active));
+    }
+  }
   // Dans le menu latéral, la page Toolbox active remplace l'état actif du site. Le menu mobile
   // conserve son style spécifique de barre du bas.
   if (!popup) {
@@ -553,6 +620,40 @@ function ensureOpenAllButton() {
   btn.classList.toggle("running", running);
 }
 
+// Option explicite du joueur : au retour sur l'écran d'accueil, attend que le bouton natif soit
+// activé puis lance la scène « Tout ouvrir ». Une tentative avec erreur reste bloquée jusqu'à une
+// ouverture manuelle réussie ; la vérification du site ne peut donc jamais être relancée en boucle.
+let autoPackOpenPending = false;
+function humanCheckVisible() {
+  if (document.querySelector('iframe[src*="turnstile"], iframe[src*="challenges.cloudflare.com"], [data-sitekey]')) return true;
+  return [...document.querySelectorAll('[role="dialog"], [role="alertdialog"]')].some((el) => {
+    if (!el.getClientRects().length) return false;
+    return /captcha|turnstile|human.?verification|anti.?robot|vérification|verification/i.test(el.textContent || "");
+  });
+}
+function ensureAutoOpenPack() {
+  if (!isOn("autoOpenPacks")) {
+    autoPackOpenPending = false;
+    return;
+  }
+  if (!currentPath().startsWith("/pulls") || document.visibilityState !== "visible" || openAllState.get().running || autoPackOpenPending || humanCheckVisible()) return;
+  const open = findButton((t) => t === "Ouvrir");
+  if (open && !open.disabled && open.getClientRects().length) {
+    autoPackOpenPending = true;
+    openAllPacks().then(() => {
+      autoPackOpenPending = Boolean(openAllState.get().error);
+      schedule();
+    });
+  }
+}
+
+on("pack-opened", ({method, data}) => {
+  if (method === "POST" && Array.isArray(data?.cards) && data.cards.length) {
+    autoPackOpenPending = false;
+    schedule();
+  }
+});
+
 // --- Page Paquets : récapitulatif du paquet et graphique des taux de drop
 // Pendant que le site révèle les cartes une à une, on attend ; quand le bouton du bas devient
 // « Continuer » (toutes les cartes vues), le récapitulatif s'affiche dessous. Il reste ensuite sur
@@ -596,6 +697,25 @@ function homeAnchor() {
   let anchor = open.nextElementSibling;
   while (anchor?.classList.contains("wmt-open-all")) anchor = anchor.nextElementSibling;
   return anchor || open;
+}
+
+// « Tout ouvrir » lit directement l'API : le compteur React du site ne voit pas ses réponses.
+// Reprend la valeur packs_remaining que packs.js reçoit pour garder le compteur visible à jour.
+function syncPullPackCounter() {
+  if (!currentPath().startsWith("/pulls")) return;
+  const remaining = packsStatus.get().remaining;
+  if (!Number.isInteger(remaining)) return;
+  const anchor = homeAnchor();
+  const scope = anchor?.parentElement;
+  if (!scope) return;
+  const countPattern = /^(\s*)(\d+)(\s*\/\s*)(\d+)(\s*(?:paquets?|packs?)?)(\s*)$/i;
+  const candidates = [scope, ...scope.querySelectorAll("*")]
+    .filter((el) => countPattern.test(el.textContent || ""))
+    .filter((el) => ![...el.children].some((child) => countPattern.test(child.textContent || "")));
+  const target = candidates.find((el) => el === anchor || anchor.contains(el)) || candidates[0];
+  const match = target && countPattern.exec(target.textContent || "");
+  if (!match || Number(match[2]) === remaining) return;
+  target.textContent = `${match[1]}${Math.max(0, Math.min(remaining, Number(match[4])))}${match[3]}${match[4]}${match[5]}${match[6]}`;
 }
 
 // Écran de révélation : bloc du compteur « Carte n / N », de la carte, des flèches et du bouton du bas
@@ -1123,7 +1243,9 @@ function run() {
   if (style && !style.isConnected) (document.head || document.documentElement).append(style);
   attempt("menu", ensureNavEntry);
   attempt("bouton Tout ouvrir", ensureOpenAllButton);
+  attempt("ouverture automatique des paquets", ensureAutoOpenPack);
   attempt("page Paquets", ensurePullsWidgets);
+  attempt("compteur de paquets", syncPullPackCounter);
   attempt("barre de la collection", ensureCollectionBar);
   attempt("ordre de la collection", applyCollectionOrder);
   attempt("fiche d'une carte", ensureCardInsight);
@@ -1170,9 +1292,12 @@ export function startSiteDom() {
   pulledTags.subscribe(schedule);
   // Étoile du site cliquée sur la carte révélée : son libellé change sans que la page soit reconstruite
   document.addEventListener("click", (e) => e.target.closest?.(SEL.starButton) && [50, 300, 1000].forEach((d) => setTimeout(schedule, d)), true);
+  document.addEventListener("visibilitychange", schedule);
+  setInterval(() => isOn("autoOpenPacks") && currentPath().startsWith("/pulls") && schedule(), 1000);
   // Récapitulatif et taux de drop dans la marge : leur place dépend de la largeur de la fenêtre
   window.addEventListener("resize", schedule, {passive: true});
   openAllState.subscribe(schedule);
+  packsStatus.subscribe(schedule);
   pullStats.subscribe(schedule);
   collectionRarity.subscribe(schedule);
   collectionView.subscribe(schedule);

@@ -246,4 +246,10 @@
 /* Entrée « Toolbox » du menu du site : nouveautés pas encore lues */
 .wmt-nav-toolbox[data-wmt-news] { position: relative; }
 /* À droite de l'entrée, comme la pastille du site sur ses propres entrées */
-.wmt-nav-toolbox[data-wmt-news]::after { content: ""; position: absolute; top: 50%; right: 18px; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 2px; background: #c5ef55; }
+.wmt-nav-toolbox[data-wmt-news]::after { content: ""; position: absolute; top: 50%; right: 42px; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 2px; background: #c5ef55; }
+.wmt-nav-group { display: flex; flex-direction: column; width: 100%; }
+.wmt-nav-submenu { display: flex; flex-direction: column; gap: 2px; margin: 2px 0 6px 12px; padding-left: 8px; border-left: 1px solid rgba(255,255,255,.14); }
+.wmt-nav-submenu[hidden] { display: none !important; }
+.wmt-nav-submenu .wmt-nav-link { padding-left: 18px; }
+.wmt-nav-chevron { width: 7px; height: 7px; margin-left: auto; margin-right: 14px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .16s ease; }
+.wmt-nav-group[data-open="true"] .wmt-nav-chevron { transform: rotate(225deg) translate(-1px, -1px); }

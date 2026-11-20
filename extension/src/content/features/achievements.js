@@ -40,6 +40,22 @@ export function mergeAchievements(defs, mine, progress = []) {
 
 export const claimable = (list) => (list || []).filter((a) => a.status === "claimable");
 
+// Objectifs suivables : l'API ne donne ni durée ni type de tâche, donc le plan privilégie la
+// progression relative la plus avancée, puis la récompense. Les valeurs d'effort restent visibles.
+export function planAchievements(list, limit = 3) {
+  return (list || [])
+    .filter((a) => a.status === "locked" && a.progress)
+    .map((a) => {
+      const current = Number(a.progress.current);
+      const target = Number(a.progress.target);
+      if (!Number.isFinite(current) || !Number.isFinite(target) || target <= 0 || current < 0 || current >= target) return null;
+      return {...a, current, target, remaining: Math.ceil(target - current), completion: current / target};
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.completion - a.completion || b.reward - a.reward || a.remaining - b.remaining || a.title.localeCompare(b.title))
+    .slice(0, Math.max(0, limit));
+}
+
 // sync : synchronisation du site (`POST /api/achievements/check`, comme sa page Succès à chaque
 // visite) : débloque les succès atteints et donne la progression des autres
 export async function loadAchievements({sync = true} = {}) {

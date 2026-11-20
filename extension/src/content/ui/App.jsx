@@ -9,7 +9,7 @@ import {priceOf, priceVersion, loadPrices} from "../state/prices";
 import {openAllPacks, openAllState, packsStatus} from "../features/packs";
 import {activeTrades} from "../features/trades";
 import {planSort, sortState} from "../features/sorter";
-import {toasts, dismissToast, dialog, closeDialog, toast, confirmAction, errorMessage} from "./feedback";
+import {toasts, dismissToast, dialog, closeDialog, toast, errorMessage} from "./feedback";
 import {Icon, Mark, fmt, plural} from "./components";
 import {SortTab} from "./tabs/SortTab";
 import {ProfilesTab} from "./tabs/ProfilesTab";
@@ -194,13 +194,6 @@ export function App() {
       on("confirm-open-all", async () => {
         // Ouverture en cours : le bouton rouvre sa scène
         if (openAllState.get().running) return showOpenAllStage();
-        const remaining = packsStatus.get().remaining;
-        const ok = await confirmAction({
-          title: L("Ouvrir tous les paquets ?", "Open all packs?"),
-          body: `${remaining != null ? `${plural(remaining, L("paquet disponible", "pack available"), L("paquets disponibles", "packs available"))}. ` : ""}${L("Ils seront ouverts l'un après l'autre (quelques secondes par paquet, le rythme du site) et leurs cartes révélées au fur et à mesure. Cette action consomme vos paquets.", "They will be opened one after another (a few seconds per pack, the site's pace) and their cards revealed as they come. This uses up your packs.")}`,
-          confirm: L("Tout ouvrir", "Open all"),
-        });
-        if (!ok) return;
         // La scène attend le premier paquet de cette ouverture (rien de la précédente)
         openAllState.set({batches: [], opened: 0, error: null});
         showOpenAllStage();
