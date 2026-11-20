@@ -103,7 +103,7 @@ extension/
         stonks.js              page Stonks : historique de mes enchères conclues, cartes achetées en stock, ouverture par #stonks
         sniper.js              page Sniper : enchères actives comparées au prix fiable, ouverture par #sniper
         sales-history.js       historique des ventes conclues d'une carte, pagination stable depuis Supabase
-        site-dom.js            intégration aux pages : tous les sélecteurs du site sont ici
+        site-dom.js            intégration aux pages : sélecteurs, « Tout ouvrir » et ouverture automatique opt-in des paquets sur une page visible
         site-assets.js         fichiers du site repris pour la carte sans image : logo, textures de rareté
       ui/                      interface (Preact, dans un Shadow DOM)
         App.jsx                racine : panneau, dialogues, toasts, encart des échanges
